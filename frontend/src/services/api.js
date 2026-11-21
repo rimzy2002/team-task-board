@@ -24,7 +24,7 @@ export function getProtectedJson(path, options) {
   return requestProtectedJson(path, options);
 }
 
-async function requestProtectedJson(path, { method = 'GET', body, signal } = {}) {
+async function requestProtectedJson(path, { method = 'GET', body, signal, taskRequest = false } = {}) {
   const url = getApiUrl(path);
   await auth.authStateReady();
   const user = auth.currentUser;
@@ -80,6 +80,30 @@ async function requestProtectedJson(path, { method = 'GET', body, signal } = {})
   if (response.status === 403) {
     throw new Error('Your account does not have access to this API request.');
   }
+  if (taskRequest && response.status === 404) {
+    throw new Error('This project or task is no longer available.');
+  }
+  if (taskRequest && response.status === 400) {
+    const problem = await response.json().catch(() => null);
+    ensureSameSession();
+    const error = new Error('Check the task details and try again.');
+    const messages = {
+      title: 'Enter a title of 1 to 200 characters.',
+      description: 'Use at most 65,535 UTF-8 bytes.',
+      status: 'Choose a task status.',
+      priority: 'Choose a priority.',
+      duedate: 'Use a valid date. A new due date must be today or later (UTC).',
+      assignee: 'Use 200 characters or fewer.',
+    };
+    error.fields = {};
+    for (const key of Object.keys(problem?.errors ?? {})) {
+      const field = key.replace(/^\$\./, '').toLowerCase();
+      if (Object.hasOwn(messages, field)) {
+        error.fields[field === 'duedate' ? 'dueDate' : field] = messages[field];
+      }
+    }
+    throw error;
+  }
   if (response.status === 400 && method === 'POST') {
     const problem = await response.json().catch(() => null);
     ensureSameSession();
@@ -94,6 +118,7 @@ async function requestProtectedJson(path, { method = 'GET', body, signal } = {})
   if (!response.ok) {
     throw new Error('The API request failed. Check the API and MySQL, then try again.');
   }
+  if (method === 'DELETE' && response.status === 204) return;
 
   let data;
   try {
@@ -120,4 +145,23 @@ export function listProjects(options) {
 
 export function createProject({ name, description }, options) {
   return requestProtectedJson('/api/projects', { ...options, method: 'POST', body: { name, description } });
+}
+
+export function listTasks(projectId, { status, priority, search, page }, options) {
+  const query = new URLSearchParams({ status, page });
+  if (priority) query.set('priority', priority);
+  if (search) query.set('search', search);
+  return requestProtectedJson(`/api/projects/${projectId}/tasks?${query}`, { ...options, taskRequest: true });
+}
+
+export function saveTask(projectId, taskId, { title, description, status, priority, dueDate, assignee }, options) {
+  const path = taskId ? `/api/tasks/${taskId}` : `/api/projects/${projectId}/tasks`;
+  return requestProtectedJson(path, {
+    ...options, taskRequest: true, method: taskId ? 'PUT' : 'POST',
+    body: { title, description, status, priority, dueDate, assignee },
+  });
+}
+
+export function deleteTask(taskId, options) {
+  return requestProtectedJson(`/api/tasks/${taskId}`, { ...options, taskRequest: true, method: 'DELETE' });
 }

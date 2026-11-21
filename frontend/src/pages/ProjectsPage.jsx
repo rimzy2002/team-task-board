@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router';
 import { createProject, listProjects } from '../services/api.js';
 import './projects.css';
 
@@ -101,7 +102,7 @@ export default function ProjectsPage() {
             <ul className="project-list">
               {projects.map((project) => (
                 <li key={project.id}>
-                  <h3>{project.name}</h3>
+                  <h3><Link to={`/projects/${project.id}/board`}>{project.name}</Link></h3>
                   {project.description && <p>{project.description}</p>}
                 </li>
               ))}

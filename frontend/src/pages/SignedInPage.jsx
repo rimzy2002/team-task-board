@@ -3,7 +3,8 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase.js';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { getCurrentUser } from '../services/api.js';
-import ProjectsPage from './ProjectsPage.jsx';
+import { Outlet } from 'react-router';
+import './projects.css';
 
 export default function SignedInPage() {
   const { user } = useAuth();
@@ -61,7 +62,7 @@ function SignedInAccount({ user }) {
       <button type="button" onClick={handleLogout} disabled={pending}>
         {pending ? 'Logging out...' : 'Log out'}
       </button>
-      <ProjectsPage />
+      <Outlet />
     </main>
   );
 }
