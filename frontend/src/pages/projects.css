@@ -1,0 +1,64 @@
+.workspace {
+  max-inline-size: 68rem;
+  margin-inline: auto;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  color: #18252f;
+  font-family: system-ui, sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.workspace button {
+  font: inherit;
+  padding: .55rem .85rem;
+}
+
+.workspace > button {
+  margin: 0 .5rem .5rem 0;
+}
+
+.projects {
+  margin-block-start: 1.5rem;
+  border-block-start: 1px solid #d5dee4;
+}
+
+.projects-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.project-form, .project-list li {
+  border: 1px solid #d5dee4;
+  border-radius: .65rem;
+  padding: 1rem;
+  background: #f7fafb;
+}
+
+.project-form {
+  display: grid;
+  gap: .65rem;
+}
+
+.project-form h3, .project-form p, .project-list h3 {
+  margin: 0;
+}
+
+.project-form input, .project-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #758490;
+  border-radius: .3rem;
+  padding: .55rem;
+  font: inherit;
+}
+
+.project-form textarea { resize: vertical; }
+.project-form [role='alert'] { color: #951e33; }
+.project-form button:not(:disabled) { background: #174b57; color: #fff; border: 1px solid #174b57; border-radius: .3rem; }
+.project-list { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
+.project-list p { margin-block: .4rem 0; white-space: pre-wrap; }
+
+@media (max-width: 42rem) {
+  .projects-layout { grid-template-columns: minmax(0, 1fr); }
+}

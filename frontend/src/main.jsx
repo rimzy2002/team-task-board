@@ -14,6 +14,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/signup" element={<SignupPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<SignedInPage />} />
+          <Route path="/projects" element={<SignedInPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

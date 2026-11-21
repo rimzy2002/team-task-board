@@ -3,6 +3,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase.js';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { getCurrentUser } from '../services/api.js';
+import ProjectsPage from './ProjectsPage.jsx';
 
 export default function SignedInPage() {
   const { user } = useAuth();
@@ -48,7 +49,7 @@ function SignedInAccount({ user }) {
   }
 
   return (
-    <main>
+    <main className="workspace">
       <h1>Team Task Board</h1>
       <p>Signed in as {user.email}</p>
       <button type="button" onClick={checkApi} disabled={pending || apiCheck?.pending}>
@@ -60,6 +61,7 @@ function SignedInAccount({ user }) {
       <button type="button" onClick={handleLogout} disabled={pending}>
         {pending ? 'Logging out...' : 'Log out'}
       </button>
+      <ProjectsPage />
     </main>
   );
 }

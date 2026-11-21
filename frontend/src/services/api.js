@@ -20,7 +20,11 @@ function getApiUrl(path) {
   throw new Error('Check VITE_API_BASE_URL. Use HTTPS or a local HTTP address.');
 }
 
-export async function getProtectedJson(path, { signal } = {}) {
+export function getProtectedJson(path, options) {
+  return requestProtectedJson(path, options);
+}
+
+async function requestProtectedJson(path, { method = 'GET', body, signal } = {}) {
   const url = getApiUrl(path);
   await auth.authStateReady();
   const user = auth.currentUser;
@@ -46,7 +50,13 @@ export async function getProtectedJson(path, { signal } = {}) {
     const timeout = AbortSignal.timeout(10000);
     try {
       return await fetch(url, {
-        headers: { Accept: 'application/json', Authorization: `Bearer ${token}` },
+        method,
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+          ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        },
+        body: body === undefined ? undefined : JSON.stringify(body),
         credentials: 'omit',
         redirect: 'error',
         cache: 'no-store',
@@ -70,6 +80,17 @@ export async function getProtectedJson(path, { signal } = {}) {
   if (response.status === 403) {
     throw new Error('Your account does not have access to this API request.');
   }
+  if (response.status === 400 && method === 'POST') {
+    const problem = await response.json().catch(() => null);
+    ensureSameSession();
+    const error = new Error('Check the project details and try again.');
+    const keys = Object.keys(problem?.errors ?? {}).map((key) => key.toLowerCase());
+    error.fields = {
+      name: keys.includes('name') ? 'Enter a project name of 200 characters or fewer.' : '',
+      description: keys.includes('description') ? 'Use 2,000 characters or fewer for the description.' : '',
+    };
+    throw error;
+  }
   if (!response.ok) {
     throw new Error('The API request failed. Check the API and MySQL, then try again.');
   }
@@ -91,4 +112,12 @@ export async function getCurrentUser(options) {
     throw new Error('The API returned an invalid local user ID.');
   }
   return user;
+}
+
+export function listProjects(options) {
+  return getProtectedJson('/api/projects', options);
+}
+
+export function createProject({ name, description }, options) {
+  return requestProtectedJson('/api/projects', { ...options, method: 'POST', body: { name, description } });
 }
