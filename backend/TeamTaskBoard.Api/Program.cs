@@ -9,11 +9,12 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options => options.AddPolicy("LocalFrontend", policy => policy
     .WithOrigins("http://127.0.0.1:5173")
-    .WithMethods("GET", "POST")
+    .WithMethods("GET", "POST", "PUT", "DELETE")
     .WithHeaders("Authorization", "Content-Type")));
 builder.Services.AddFirebaseAuthentication(builder.Configuration);
 builder.Services.AddScoped<LocalUserService>();
 builder.Services.AddScoped<ProjectService>();
+builder.Services.AddScoped<TaskService>();
 builder.Services.AddDbContext<TeamTaskBoardContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("TeamTaskBoard");

@@ -51,7 +51,11 @@ public sealed class TeamTaskBoardContext(DbContextOptions<TeamTaskBoardContext> 
             .HasMaxLength(16).UseCollation(ExactTextCollation);
         tasks.Property(task => task.Priority).HasColumnName("priority").HasConversion<string>()
             .HasMaxLength(8).UseCollation(ExactTextCollation);
-        tasks.Property(task => task.DueDate).HasColumnName("due_date").HasColumnType("date");
+        // Connector/NET reads MySQL DATE values as DateTime.
+        tasks.Property(task => task.DueDate).HasColumnName("due_date").HasColumnType("date")
+            .HasConversion(
+                date => date!.Value.ToDateTime(TimeOnly.MinValue),
+                date => DateOnly.FromDateTime(date));
         tasks.Property(task => task.Assignee).HasColumnName("assignee").HasMaxLength(200);
         tasks.Property(task => task.CreatedAtUtc).HasColumnName("created_at_utc").HasColumnType("datetime(6)");
         tasks.Property(task => task.UpdatedAtUtc).HasColumnName("updated_at_utc").HasColumnType("datetime(6)");
