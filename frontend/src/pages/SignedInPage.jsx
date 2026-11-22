@@ -3,7 +3,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase.js';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { getCurrentUser } from '../services/api.js';
-import { Outlet } from 'react-router';
+import { NavLink, Outlet } from 'react-router';
 import './projects.css';
 
 export default function SignedInPage() {
@@ -62,6 +62,10 @@ function SignedInAccount({ user }) {
       <button type="button" onClick={handleLogout} disabled={pending}>
         {pending ? 'Logging out...' : 'Log out'}
       </button>
+      <nav className="workspace-nav" aria-label="Workspace">
+        <NavLink to="/projects">Projects</NavLink>
+        <NavLink to="/reports/overdue">Overdue report</NavLink>
+      </nav>
       <Outlet />
     </main>
   );

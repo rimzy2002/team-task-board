@@ -143,6 +143,10 @@ export function listProjects(options) {
   return getProtectedJson('/api/projects', options);
 }
 
+export function getOverdueReport(options) {
+  return getProtectedJson('/api/reports/overdue-by-user', options);
+}
+
 export function createProject({ name, description }, options) {
   return requestProtectedJson('/api/projects', { ...options, method: 'POST', body: { name, description } });
 }

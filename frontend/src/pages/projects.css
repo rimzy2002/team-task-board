@@ -16,6 +16,10 @@
   margin: 0 .5rem .5rem 0;
 }
 
+.workspace-nav { display: flex; flex-wrap: wrap; gap: .45rem 1.25rem; margin-block-start: .75rem; }
+.workspace-nav a { color: #174b57; text-underline-offset: .25em; padding-block: .4rem; }
+.workspace-nav a.active { font-weight: 700; text-decoration-thickness: 2px; }
+
 .projects {
   margin-block-start: 1.5rem;
   border-block-start: 1px solid #d5dee4;

@@ -15,6 +15,7 @@ builder.Services.AddFirebaseAuthentication(builder.Configuration);
 builder.Services.AddScoped<LocalUserService>();
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<TaskService>();
+builder.Services.AddScoped<ReportService>();
 builder.Services.AddDbContext<TeamTaskBoardContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("TeamTaskBoard");
