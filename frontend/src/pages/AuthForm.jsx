@@ -6,6 +6,7 @@ import {
 import { Link, Navigate } from 'react-router';
 import { auth } from '../config/firebase.js';
 import { useAuth } from '../contexts/AuthContext.jsx';
+import './ui-theme.css';
 
 export default function AuthForm({ mode }) {
   const { user, loading } = useAuth();
@@ -51,46 +52,68 @@ export default function AuthForm({ mode }) {
     }
   }
 
-  if (loading) return <p role="status">Checking your session...</p>;
+  if (loading) {
+    return (
+      <main className="auth-page">
+        <p role="status" className="auth-status">
+          Checking your session...
+        </p>
+      </main>
+    );
+  }
   if (user) return <Navigate to="/" replace />;
 
   return (
-    <main>
-      <h1>{title}</h1>
+    <main className="auth-page">
+      <div className="auth-brand">
+        <span className="brand-mark" aria-hidden="true">T</span>
+        <span>Team Task Board</span>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <p>
-          <label htmlFor="email">Email</label>
-          <br />
-          <input id="email" name="email" type="email" autoComplete="email" required />
+      <div className="auth-card">
+        <h1>{title}</h1>
+        <p className="auth-subtitle">
+          {isSignup
+            ? 'Create an account to start organizing your team’s work.'
+            : 'Welcome back. Log in to continue.'}
         </p>
 
-        <p>
-          <label htmlFor="password">Password</label>
-          <br />
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete={isSignup ? 'new-password' : 'current-password'}
-            minLength={isSignup ? 6 : undefined}
-            required
-          />
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input id="email" name="email" type="email" autoComplete="email" required />
+          </div>
+
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete={isSignup ? 'new-password' : 'current-password'}
+              minLength={isSignup ? 6 : undefined}
+              required
+            />
+          </div>
+
+          {error && (
+            <p role="alert" className="notice notice-error">
+              {error}
+            </p>
+          )}
+
+          <button type="submit" className="btn btn-primary" disabled={pending}>
+            {pending ? 'Please wait...' : title}
+          </button>
+        </form>
+
+        <p className="auth-switch">
+          {isSignup ? 'Already have an account? ' : 'New to Team Task Board? '}
+          <Link to={isSignup ? '/login' : '/signup'}>
+            {isSignup ? 'Log in' : 'Create an account'}
+          </Link>
         </p>
-
-        {error && <p role="alert">{error}</p>}
-
-        <button type="submit" disabled={pending}>
-          {pending ? 'Please wait...' : title}
-        </button>
-      </form>
-
-      <p>
-        {isSignup ? 'Already have an account? ' : 'New to Team Task Board? '}
-        <Link to={isSignup ? '/login' : '/signup'}>
-          {isSignup ? 'Log in' : 'Create an account'}
-        </Link>
-      </p>
+      </div>
     </main>
   );
 }
