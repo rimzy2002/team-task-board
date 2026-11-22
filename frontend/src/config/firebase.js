@@ -12,4 +12,5 @@ if (Object.values(config).some((value) => !value?.trim())) {
   throw new Error('Missing Firebase web config. Check frontend/.env.local.');
 }
 
-export const auth = getAuth(initializeApp(config));
+export const firebaseApp = initializeApp(config);
+export const auth = getAuth(firebaseApp);

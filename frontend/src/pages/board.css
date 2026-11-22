@@ -86,7 +86,6 @@
 .task-meta div { display: flex; gap: .5rem; flex-wrap: wrap; align-items: baseline; }
 .task-meta dt { color: #425461; }
 .task-meta dd { margin: 0; font-weight: 600; }
-.task-card details p { margin-block: .35rem 0; white-space: pre-wrap; }
 .task-move { display: flex; gap: .4rem; }
 .task-move select { flex: 1; }
 .column-pages { margin-block-start: .75rem; justify-content: space-between; }
@@ -113,6 +112,23 @@
 .task-field p { margin: 0; }
 .board-error { color: #92273a; }
 .board-feedback { color: #14603f; font-weight: 600; }
+
+.task-details-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.task-details-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.task-comments { border-block-start: 1px solid #d5dee4; margin-block-start: 1rem; }
+.task-comments h4 { margin-block: .85rem; }
+.task-comment-list { list-style: none; margin: 0 0 1rem; padding: 0; }
+.task-comment-list li {
+  border-block-end: 1px solid #d5dee4;
+  padding-block: .6rem;
+}
+.task-comment-list p { margin: 0 0 .2rem; }
+.task-comment-list time, .task-comment-list span { color: #425461; font-size: .85rem; }
 
 @media (max-width: 50rem) {
   .kanban-grid { grid-template-columns: minmax(0, 1fr); }

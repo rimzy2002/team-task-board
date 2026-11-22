@@ -3,7 +3,7 @@ import { listTasks } from '../services/api.js';
 import { taskStatuses } from './TaskForm.jsx';
 
 export default function KanbanColumn({ projectId, status, label, priority, search, recent, busy,
-  onEdit, onMove, onDelete }) {
+  onDetails, onEdit, onMove, onDelete }) {
   const [page, setPage] = useState(1);
   const [attempt, setAttempt] = useState(0);
   const [result, setResult] = useState(null);
@@ -34,7 +34,7 @@ export default function KanbanColumn({ projectId, status, label, priority, searc
   const extraTask = showRecent && recent?.status === status && !data?.items.some((task) => task.id === recent.id)
     ? recent : null;
   const pages = data && Math.max(1, Math.ceil(data.totalCount / data.pageSize));
-  const actions = { busy, onEdit, onMove, onDelete };
+  const actions = { busy, onDetails, onEdit, onMove, onDelete };
   return <section className={`kanban-column kanban-${status}`} aria-labelledby={`column-${status}`} aria-busy={!current}>
     <header className="column-heading">
       <h3 id={`column-${status}`}>{label}</h3>
@@ -63,7 +63,7 @@ export default function KanbanColumn({ projectId, status, label, priority, searc
   </section>;
 }
 
-function TaskCard({ task, busy, onEdit, onMove, onDelete }) {
+function TaskCard({ task, busy, onDetails, onEdit, onMove, onDelete }) {
   return <article className="task-card">
     <h4>{task.title}</h4>
     <dl className="task-meta">
@@ -71,8 +71,8 @@ function TaskCard({ task, busy, onEdit, onMove, onDelete }) {
       {task.dueDate && <div><dt>Due</dt><dd><time dateTime={task.dueDate}>{task.dueDate}</time></dd></div>}
       {task.assignee && <div><dt>Assignee</dt><dd>{task.assignee}</dd></div>}
     </dl>
-    {task.description && <details><summary>Description</summary><p>{task.description}</p></details>}
     <div className="board-actions task-actions">
+      <button type="button" disabled={busy} aria-label={`Details for ${task.title}`} onClick={() => onDetails(task)}>Details</button>
       <button type="button" disabled={busy} aria-label={`Edit ${task.title}`} onClick={() => onEdit(task)}>Edit</button>
       <button type="button" disabled={busy} aria-label={`Delete ${task.title}`} onClick={() => onDelete(task)}>Delete</button>
     </div>

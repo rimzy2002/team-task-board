@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { deleteTask, listProjects, saveTask } from '../services/api.js';
 import KanbanColumn from './KanbanColumn.jsx';
@@ -6,6 +6,7 @@ import TaskForm, { taskPriorities, taskStatuses } from './TaskForm.jsx';
 import './board.css';
 
 const noFilters = { priority: '', search: '' };
+const TaskDetailsPanel = lazy(() => import('./TaskDetailsPanel.jsx'));
 
 export default function BoardPage() {
   const { projectId } = useParams();
@@ -45,6 +46,7 @@ function TaskBoard({ project }) {
   const [revision, setRevision] = useState(0);
   const [recent, setRecent] = useState(null);
   const [dialog, setDialog] = useState(null);
+  const [detailTask, setDetailTask] = useState(null);
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [formError, setFormError] = useState(null);
@@ -150,10 +152,14 @@ function TaskBoard({ project }) {
     <div className="kanban-grid">
       {taskStatuses.map(([status, label]) => <KanbanColumn key={`${status}:${revision}`}
         projectId={project.id} status={status} label={label} {...filters} recent={recent} busy={busy}
-        onEdit={(task) => showDialog('edit', task)} onMove={move} onDelete={(task) => showDialog('delete', task)} />)}
+        onDetails={setDetailTask} onEdit={(task) => showDialog('edit', task)} onMove={move}
+        onDelete={(task) => showDialog('delete', task)} />)}
     </div>
     {dialog && <TaskDialog dialog={dialog} busy={busy} error={formError} onCancel={() => setDialog(null)}
       onSubmit={(fields) => mutate(dialog.kind, dialog.task, fields)} />}
+    {detailTask && <Suspense fallback={<p role="status">Loading task details…</p>}>
+      <TaskDetailsPanel task={detailTask} onClose={() => setDetailTask(null)} />
+    </Suspense>}
   </>;
 }
 
