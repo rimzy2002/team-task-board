@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/tasks/{taskId}/comments/{commentId} {
+      function ownsNamespace() {
+        return request.auth != null && request.auth.uid == uid
+          && taskId.matches('[1-9][0-9]{0,18}');
+      }
+
+      function validComment() {
+        let data = request.resource.data;
+        let fields = ['text', 'authorUid', 'createdAt'];
+        return data.keys().hasAll(fields) && data.keys().hasOnly(fields)
+          && data.authorUid == request.auth.uid
+          && data.text is string && data.text.size() <= 1000
+          && data.text.matches('(?s).*[^\\s\\p{Z}\\x{000B}\\x{FEFF}].*')
+          && data.createdAt is timestamp && data.createdAt == request.time;
+      }
+
+      allow get, list: if ownsNamespace();
+      allow create: if ownsNamespace() && validComment();
+    }
+  }
+}

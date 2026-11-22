@@ -1,0 +1,168 @@
+.overdue-report {
+  --or-primary: #4338ca;
+  --or-primary-hover: #3730a3;
+  --or-primary-soft: #eef2ff;
+  --or-focus: #6366f1;
+  --or-text: #0f172a;
+  --or-muted: #475569;
+  --or-border: #e2e8f0;
+  --or-surface: #ffffff;
+  --or-surface-alt: #f8fafc;
+  --or-danger: #b42318;
+  --or-danger-bg: #fef3f2;
+  --or-danger-border: #fecdca;
+  --or-radius: 12px;
+
+  margin-block-start: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  background: var(--or-surface);
+  border: 1px solid var(--or-border);
+  border-radius: var(--or-radius);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .05), 0 4px 12px rgba(15, 23, 42, .04);
+  color: var(--or-text);
+  box-sizing: border-box;
+}
+
+.overdue-report-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+.overdue-report-heading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  color: var(--or-text);
+}
+
+.overdue-report-heading button {
+  color: #fff;
+  background: var(--or-primary);
+  border: 1px solid var(--or-primary);
+  border-radius: 8px;
+  min-block-size: 2.6rem;
+  padding-inline: 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: .9rem;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(67, 56, 202, .25);
+  transition: background-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.overdue-report-heading button:hover {
+  background: var(--or-primary-hover);
+  border-color: var(--or-primary-hover);
+  box-shadow: 0 3px 8px rgba(67, 56, 202, .3);
+}
+.overdue-report-heading button:active { transform: translateY(1px); }
+.overdue-report-heading button:focus-visible {
+  outline: 3px solid var(--or-focus);
+  outline-offset: 2px;
+}
+
+#overdue-definition {
+  margin: .5rem 0 1rem;
+  color: var(--or-muted);
+  font-size: .925rem;
+  line-height: 1.5;
+}
+
+/* Loading / empty states */
+.overdue-report [role="status"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  margin: 0;
+  padding: 1.75rem 1rem;
+  color: var(--or-muted);
+  background: var(--or-surface-alt);
+  border: 1px dashed var(--or-border);
+  border-radius: 10px;
+  text-align: center;
+}
+.overdue-report [aria-busy="true"] > [role="status"]::before {
+  content: "";
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  border: 2px solid var(--or-border);
+  border-top-color: var(--or-primary);
+  border-radius: 50%;
+  animation: overdue-spin .8s linear infinite;
+}
+@keyframes overdue-spin { to { transform: rotate(360deg); } }
+
+/* Error */
+.overdue-error {
+  color: var(--or-danger);
+  background: var(--or-danger-bg);
+  border: 1px solid var(--or-danger-border);
+  border-radius: 10px;
+  padding: .85rem 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Table */
+.overdue-report table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  max-inline-size: 48rem;
+  border: 1px solid var(--or-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.overdue-report caption {
+  text-align: start;
+  font-weight: 600;
+  padding-block: 0 .6rem;
+  color: var(--or-text);
+}
+.overdue-report th, .overdue-report td {
+  border-block-end: 1px solid var(--or-border);
+  padding: .75rem clamp(.5rem, 2vw, 1rem);
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.overdue-report thead { background: var(--or-surface-alt); }
+.overdue-report thead th {
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--or-muted);
+}
+.overdue-report tbody th { font-weight: 500; color: var(--or-text); }
+.overdue-report tbody th em { color: var(--or-muted); }
+.overdue-report tbody tr { transition: background-color .15s ease; }
+.overdue-report tbody tr:hover { background: var(--or-primary-soft); }
+.overdue-report tbody tr:last-child th,
+.overdue-report tbody tr:last-child td { border-block-end: 0; }
+.overdue-report th:last-child, .overdue-report td:last-child {
+  inline-size: 7rem;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+.overdue-report tbody td:last-child {
+  font-weight: 650;
+  color: var(--or-primary);
+}
+
+/* Small screens */
+@media (max-width: 480px) {
+  .overdue-report-heading button { inline-size: 100%; }
+  .overdue-report th:last-child, .overdue-report td:last-child { inline-size: 5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overdue-report *, .overdue-report *::before {
+    animation: none !important;
+    transition: none !important;
+  }
+}
