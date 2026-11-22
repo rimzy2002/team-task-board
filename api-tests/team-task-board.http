@@ -1,0 +1,73 @@
+@baseUrl = http://127.0.0.1:5080
+@projectId = {{createProject.response.body.$.id}}
+@taskId = {{createTask.response.body.$.id}}
+
+### Startup check · 200
+# @name health
+GET {{baseUrl}}/health
+
+### Local account · 200
+# @name currentUser
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{$dotenv FIREBASE_ID_TOKEN}}
+
+### Your projects · 200
+# @name listProjects
+GET {{baseUrl}}/api/projects
+Authorization: Bearer {{$dotenv FIREBASE_ID_TOKEN}}
+
+### Create a disposable project · 201
+# @name createProject
+POST {{baseUrl}}/api/projects
+Authorization: Bearer {{$dotenv FIREBASE_ID_TOKEN}}
+Content-Type: application/json
+
+{
+  "name": "Workshop planning",
+  "description": "Prepare materials for the local engineering workshop."
+}
+
+### Create one task in the project above · 201
+# @name createTask
+POST {{baseUrl}}/api/projects/{{projectId}}/tasks
+Authorization: Bearer {{$dotenv FIREBASE_ID_TOKEN}}
+Content-Type: application/json
+
+{
+  "title": "Draft workshop agenda",
+  "description": "Add session topics and a time estimate.",
+  "status": "ToDo",
+  "priority": "High",
+  "dueDate": null,
+  "assignee": "Alex"
+}
+
+### Filter by status, priority and title substring; page starts at 1 · 200
+# @name listTasks
+GET {{baseUrl}}/api/projects/{{projectId}}/tasks?status=ToDo&priority=High&search=agenda&page=1
+Authorization: Bearer {{$dotenv FIREBASE_ID_TOKEN}}
+
+### Full replacement of only the disposable task · 200
+# @name updateTask
+PUT {{baseUrl}}/api/tasks/{{taskId}}
+Authorization: Bearer {{$dotenv FIREBASE_ID_TOKEN}}
+Content-Type: application/json
+
+{
+  "title": "Draft workshop agenda",
+  "description": "Add session topics, timing and breaks.",
+  "status": "InProgress",
+  "priority": "Medium",
+  "dueDate": null,
+  "assignee": "Alex"
+}
+
+### Your overdue counts grouped by assignee · 200
+# @name overdueReport
+GET {{baseUrl}}/api/reports/overdue-by-user
+Authorization: Bearer {{$dotenv FIREBASE_ID_TOKEN}}
+
+### Delete the disposable task created above · 204
+# @name deleteTask
+DELETE {{baseUrl}}/api/tasks/{{taskId}}
+Authorization: Bearer {{$dotenv FIREBASE_ID_TOKEN}}
