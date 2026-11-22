@@ -67,7 +67,7 @@ function TaskCard({ task, busy, onDetails, onEdit, onMove, onDelete }) {
   return <article className="task-card">
     <h4>{task.title}</h4>
     <dl className="task-meta">
-      <div><dt>Priority</dt><dd>{task.priority}</dd></div>
+      <div><dt>Priority</dt><dd className={`priority priority-${task.priority}`}>{task.priority}</dd></div>
       {task.dueDate && <div><dt>Due</dt><dd><time dateTime={task.dueDate}>{task.dueDate}</time></dd></div>}
       {task.assignee && <div><dt>Assignee</dt><dd>{task.assignee}</dd></div>}
     </dl>
